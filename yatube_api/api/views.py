@@ -4,7 +4,7 @@ from posts.models import Follow, Group, Post, User
 from rest_framework import filters, permissions, viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from .permission import IsOwnerOrReadOnly
+from .permission import IsOwnerOrReadOnly, ReadOnly
 from .serializers import (CommentSerializer, FollowSerializer, GroupSerializer,
                           PostSerializer)
 
@@ -33,11 +33,16 @@ class CommentViewSet(viewsets.ModelViewSet):
         return post.comments.all()
 
 
-class GroupViewSet(viewsets.ModelViewSet):
-    http_method_names = ['get']
-    queryset = Group.objects.all()
+class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GroupSerializer
-    permission_classes = [permissions.AllowAny]
+    queryset = Group.objects.all()
+    permission_classes = (IsOwnerOrReadOnly,)
+
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return (ReadOnly(),)
+
+        return super().get_permissions()
 
 
 class FollowViewSet(viewsets.ModelViewSet):

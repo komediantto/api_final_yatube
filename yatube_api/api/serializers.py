@@ -1,6 +1,5 @@
+from posts.models import Comment, Follow, Group, Post, User
 from rest_framework import serializers
-
-from posts.models import Comment, Post, Group, Follow, User
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -10,7 +9,7 @@ class PostSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = ('id', 'text', 'author', 'pub_date', 'group')
+        fields = '__all__'
         model = Post
 
 
